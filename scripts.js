@@ -2,6 +2,7 @@
     var currRound = "";
     var playerRound = "";
     var strict = false;
+    var steps = 0;
 
     function play(currRound) {
         for (i = 0; i < currRound.length; i++) {
@@ -24,7 +25,9 @@
 
     function startRound(event) {
         currRound += Math.floor(Math.random() * 4 + 1).toString();
-        
+        play(currRound);
+        steps++;
+        $("#steps").text(steps);
         $("#display").text(currRound);
         
     }
@@ -33,8 +36,21 @@
         playerRound += event.data.button.toString();
         $("#prevRound").text(playerRound);
 
+        if (currRound == playerRound) {
+            if (steps == 20) {
+                alert("you won!");
+            }
+            else{
+                alert("good job!");
+                $("#start").trigger("click", { currRound: currRound });
+                playerRound = "";
+                $("#prevRound").text(playerRound);
+            }
+        }
+
         if (currRound.substr(0, playerRound.length) !== playerRound) {
             if (strict) {
+                alert("wrong sequence");
                 $("#restart").trigger("click");
             } else {
                 alert("wrong sequence");
@@ -44,12 +60,7 @@
             }
             
         }
-        if (currRound == playerRound) {
-            alert("good job!");
-            $("#start").trigger("click", { currRound: currRound });
-            playerRound = "";
-            $("#prevRound").text(playerRound);
-        }
+        
     }
 
     $("#start").click({ currRound: currRound }, startRound);
@@ -61,7 +72,7 @@
         $("#prevRound").text(playerRound);
     });
 
-    $("#strict").click(function() {
+    $("#strict").change(function() {
         strict = !strict;
     });
 
