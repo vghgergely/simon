@@ -26,7 +26,7 @@
     function startRound(event) {
         currRound += Math.floor(Math.random() * 4 + 1).toString();
         play(currRound);
-        steps++;
+        steps = currRound.length;
         $("#steps").text(steps);
         $("#display").text(currRound);
         
@@ -68,8 +68,10 @@
     $("#restart").click(function() {
         currRound = "";
         playerRound = "";
+        steps = 0;
         $("#display").text(currRound);
         $("#prevRound").text(playerRound);
+        $("#steps").text(steps);
     });
 
     $("#strict").change(function() {
