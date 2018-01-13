@@ -4,26 +4,23 @@
     var strict = false;
     var steps = 0;
 
-    function play(currRound) {
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function play(currRound) {
         for (i = 0; i < currRound.length; i++) {
-            switch(currRound[i]) {
-                case "1":
-                    //TRIGGER 1
-                    break;
-                case "2":
-                    //TRIGGER 2
-                    break;
-                case "3":
-                    //TRIGGER 3
-                    break;
-                case "4":
-                    //TRIGGER 4
-                    break;
-            }
+            var temp = $("#btn" + currRound[i]);
+            temp.addClass("active");
+            $("#audio" + currRound[i]).get(0).play();
+            await sleep(600);
+            temp.removeClass("active");
+
+
         }
     }
 
-    function startRound(event) {
+    function startRound() {
         currRound += Math.floor(Math.random() * 4 + 1).toString();
         play(currRound);
         steps = currRound.length;
@@ -33,34 +30,38 @@
     }
 
     function buttonPress(event) {
+        $("#audio" + event.data.button.toString()).get(0).play();
         playerRound += event.data.button.toString();
         $("#prevRound").text(playerRound);
+       
+        setTimeout(function() {
+                if (currRound == playerRound) {
+                    if (steps == 20) {
+                        alert("you won!");
+                    } else {
+                        alert("good job!");
+                        $("#start").trigger("click", { currRound: currRound });
+                        playerRound = "";
+                        $("#prevRound").text(playerRound);
+                    }
+                }
 
-        if (currRound == playerRound) {
-            if (steps == 20) {
-                alert("you won!");
-            }
-            else{
-                alert("good job!");
-                $("#start").trigger("click", { currRound: currRound });
-                playerRound = "";
-                $("#prevRound").text(playerRound);
-            }
-        }
+                if (currRound.substr(0, playerRound.length) !== playerRound) {
+                    if (strict) {
+                        alert("wrong sequence");
+                        $("#restart").trigger("click");
+                    } else {
+                        alert("wrong sequence");
+                        playerRound = "";
+                        $("#prevRound").text(playerRound);
+                        play(currRound);
+                    }
 
-        if (currRound.substr(0, playerRound.length) !== playerRound) {
-            if (strict) {
-                alert("wrong sequence");
-                $("#restart").trigger("click");
-            } else {
-                alert("wrong sequence");
-                playerRound = "";
-                $("#prevRound").text(playerRound);
-                play(currRound);
-            }
-            
-        }
-        
+                }
+            },
+            1);
+
+
     }
 
     $("#start").click({ currRound: currRound }, startRound);
@@ -74,8 +75,10 @@
         $("#steps").text(steps);
     });
 
-    $("#strict").change(function() {
+    $("#strict").click(function() {
         strict = !strict;
+        $(this).toggleClass("strict");
+        $("#strictText").toggleClass("bold");
     });
 
     $("#btn1").click({ button: 1 },buttonPress);
