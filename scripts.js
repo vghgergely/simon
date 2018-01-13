@@ -34,12 +34,13 @@
         playerRound += event.data.button.toString();
         $("#prevRound").text(playerRound);
        
-        setTimeout(function() {
+        setTimeout(async function() {
                 if (currRound == playerRound) {
                     if (steps == 20) {
-                        alert("you won!");
+                        alert("You won!");
                     } else {
-                        alert("good job!");
+                        await sleep(1000);
+                        
                         $("#start").trigger("click", { currRound: currRound });
                         playerRound = "";
                         $("#prevRound").text(playerRound);
@@ -48,10 +49,10 @@
 
                 if (currRound.substr(0, playerRound.length) !== playerRound) {
                     if (strict) {
-                        alert("wrong sequence");
+                        
                         $("#restart").trigger("click");
                     } else {
-                        alert("wrong sequence");
+                        await sleep(1000);
                         playerRound = "";
                         $("#prevRound").text(playerRound);
                         play(currRound);
